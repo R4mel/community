@@ -7,11 +7,13 @@ import dev.community.entity.User;
 import dev.community.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -52,6 +54,7 @@ public class UserService {
         return new UserResponseDto(user);
     }
 
+    @Transactional
     public UserResponseDto updateUserInfo(Long userId, UserUpdateRequestDto requestDto) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + userId));
@@ -66,5 +69,15 @@ public class UserService {
         user.setUpdatedAt(LocalDateTime.now());
 
         return new UserResponseDto(user);
+    }
+
+    @Transactional
+    public void deleteUser(Long userId) {
+        User userToDelete = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + userId));
+
+        userRepository.delete(userToDelete);
+
+        log.info("User with ID {} has been successfully deleted.", userId);
     }
 }
