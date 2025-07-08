@@ -22,10 +22,6 @@ public class Category {
     @Enumerated(EnumType.STRING)
     private CategoryStatus categoryStatus;
 
-    public void setCategoryStatus(CategoryStatus CategoryStatus) {
-        this.categoryStatus = categoryStatus;
-    }
-
     // Category(1) to Post(Many)
     @OneToMany(mappedBy = "category")
     private List<Post> posts = new ArrayList<>();

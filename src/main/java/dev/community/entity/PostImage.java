@@ -1,13 +1,14 @@
 package dev.community.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Table(name = "post_images")
 @Getter
+@Setter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostImage {
     @Id
@@ -19,6 +20,6 @@ public class PostImage {
     private String imageUrl;
 
     @ManyToOne(fetch = FetchType.LAZY) // Many(PostImage) to One(Post)
-    @JoinColumn(name = "post_id")
+    @JoinColumn(name = "post_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Post post;
 }
