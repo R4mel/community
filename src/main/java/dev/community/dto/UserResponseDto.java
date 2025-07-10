@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Builder
 public class UserResponseDto {
     private Long userId;
-    private Long socialId;
+    private String socialId;
     private String nickname;
     private String profileImage;
     private LocalDateTime createdAt;

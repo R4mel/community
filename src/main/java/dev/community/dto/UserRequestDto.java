@@ -10,8 +10,8 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class UserRequestDto {
-    @NotNull(message = "소셜 ID는 필수입니다.")
-    private Long socialId;
+    @NotBlank(message = "소셜 ID는 필수입니다.")
+    private String socialId;
 
     @NotBlank(message = "닉네임을 입력하새요.")
     private String nickname;
