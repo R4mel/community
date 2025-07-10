@@ -2,6 +2,7 @@ package dev.community.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -22,7 +23,6 @@ public class Post {
     @Column(name = "title", nullable = false)
     private String title;
 
-    @Lob // 대형 객체 데이터를 저장하기 위한 가변 길이 데이터 유형
     @Column(name = "content", nullable = false)
     private String content;
 
@@ -49,4 +49,31 @@ public class Post {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
 
+    @Builder
+    public Post(String title, String content, User user, Category category) {
+        this.title = title;
+        this.content = content;
+        this.user = user;
+        this.category = category;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    /**
+     * 게시글 정보를 업데이트하는 메서드
+     *
+     * @param title    수정할 제목
+     * @param content  수정할 내용
+     * @param category 수정할 카테고리
+     */
+    public void update(String title, String content, Category category) {
+        this.title = title;
+        this.content = content;
+        this.category = category;
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    public void increaseViewCount() {
+        this.viewCount++;
+    }
 }
