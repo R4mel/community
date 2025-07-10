@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface LikeRepository extends JpaRepository<Like, LikeId> {
+    long countByLikeId_PostId(Long postId);
 }
