@@ -22,7 +22,9 @@ public class PostResponseDto {
     private LocalDateTime updatedAt;
     private Integer viewCount;
     private Long userId;
+    private String authorNickname;
     private Long categoryId;
+    private String categoryName;
     private List<PostImageResponseDto> postImages;
     private List<CommentResponseDto> comments;
 
@@ -34,7 +36,9 @@ public class PostResponseDto {
         this.updatedAt = post.getUpdatedAt();
         this.viewCount = post.getViewCount();
         this.userId = post.getUser().getUserId();
+        this.authorNickname = post.getUser().getNickname();
         this.categoryId = post.getCategory().getCategoryId();
+        this.categoryName = post.getCategory().getCategoryStatus().getDescription();
         this.postImages = post.getPostImages().stream()
                 .map(PostImageResponseDto::new)
                 .collect(Collectors.toList());
