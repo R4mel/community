@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title th:text="${post.title}"></title>
+</head>
+<body>
+<section>
+    <h1 th:text="${post.title}"></h1>
+    <p><strong>Author:</strong> <span th:text="${post.authorNickname}"></span></p>
+    <p><strong>Category:</strong> <span th:text="${post.categoryName}"></span></p>
+    <p><strong>Created At:</strong> <span th:text="${post.createdAt}"></span></p>
+    <div th:utext="${post.content}"></div>
+
+    <div th:if="${post.images != null and !post.images.isEmpty()}">
+        <h2>Images</h2>
+        <div th:each="image : ${post.images}">
+            <img th:src="${image.imageUrl}" alt="Post Image" width="200"/>
+        </div>
+    </div>
+
+    <a href="/posts" class="btn btn-primary">Back to List</a>
+    <a th:href="@{/posts/{id}/edit(id=${post.postId})}" class="btn btn-info">Edit</a>
+    <form th:action="@{/posts/{id}(id=${post.postId})}" th:method="delete" style="display:inline;">
+        <button type="submit" class="btn btn-danger">Delete</button>
+    </form>
+</section>
+</body>
+</html>

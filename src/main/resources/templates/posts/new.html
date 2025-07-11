@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>New Post</title>
+</head>
+<body>
+<section>
+    <h1>New Post</h1>
+    <form th:action="@{/posts}" th:object="${post}" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="title">Title</label>
+            <input type="text" id="title" th:field="*{title}" class="form-control"/>
+        </div>
+        <div class="form-group">
+            <label for="content">Content</label>
+            <textarea id="content" th:field="*{content}" class="form-control"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="categoryId">Category</label>
+            <select id="categoryId" th:field="*{categoryId}" class="form-control">
+                <option th:each="category : ${categories}" th:value="${category.categoryId}" th:text="${category.categoryStatusCodeDescription}"></option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="images">Images</label>
+            <input type="file" id="images" name="images" multiple class="form-control-file"/>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</section>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Posts</title>
+</head>
+<body>
+<section>
+    <h1>Post List</h1>
+    <a href="/posts/new" class="btn btn-primary mb-3">Write Post</a>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Category</th>
+            <th>Created At</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="post : ${posts}">
+            <td th:text="${post.postId}"></td>
+            <td><a th:href="@{/posts/{id}(id=${post.postId})}" th:text="${post.title}"></a></td>
+            <td th:text="${post.authorNickname}"></td>
+            <td th:text="${post.categoryName}"></td>
+            <td th:text="${post.createdAt}"></td>
+            <td>
+                <a th:href="@{/posts/{id}/edit(id=${post.postId})}" class="btn btn-sm btn-info">Edit</a>
+                <form th:action="@{/posts/{id}(id=${post.postId})}" th:method="delete" style="display:inline;">
+                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</section>
+</body>
+</html>

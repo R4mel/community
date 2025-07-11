@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Main</title>
+</head>
+<body>
+<section>
+    <h1>Welcome to the Community!</h1>
+    <p>This is the main page.</p>
+
+    <h2>Menu</h2>
+    <ul>
+        <li><a th:href="@{/users}">Users</a></li>
+        <li><a th:href="@{/posts}">Posts</a></li>
+    </ul>
+
+    <!-- 로그인 안 한 사용자용 -->
+    <div sec:authorize="isAnonymous()">
+        <a href="/oauth2/authorization/kakao">
+            <img th:src="@{/kakao_login_medium_narrow.png}" alt="Kakao Login">
+        </a>
+    </div>
+
+    <!-- 로그인한 사용자용 -->
+    <div sec:authorize="isAuthenticated()">
+        <p>
+            <strong th:text="${nickname}">닉네임</strong> 님 환영합니다!
+        </p>
+        <img th:src="${profileImage}" alt="프로필 이미지" width="100" height="100"/>
+
+        <form th:action="@{/logout}" method="post">
+            <button type="submit">로그아웃</button>
+        </form>
+    </div>
+</section>
+</body>
+</html>
