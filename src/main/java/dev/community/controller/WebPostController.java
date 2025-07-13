@@ -3,6 +3,7 @@ package dev.community.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import dev.community.dto.PostRequestDto;
+import dev.community.entity.User;
 import dev.community.service.CategoryService;
 import dev.community.service.PostService;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +37,12 @@ public class WebPostController {
     @GetMapping("/{id}")
     public String getPost(@PathVariable Long id, Model model) {
         model.addAttribute("post", postService.getPostById(id));
+        // Add categories for edit form if user is authenticated
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated() && 
+            authentication.getPrincipal() instanceof User) {
+            model.addAttribute("categories", categoryService.getAllCategories());
+        }
         return "posts/detail";
     }
 
@@ -49,52 +56,61 @@ public class WebPostController {
 
     @PostMapping
     public String createPost(@ModelAttribute PostRequestDto postRequestDto,
-                             @RequestParam("images") List<MultipartFile> images) {
+                             @RequestParam(value = "images", required = false) List<MultipartFile> images) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             logger.error("User is not authenticated when submitting post.");
-            // Handle unauthenticated user, e.g., redirect to login page
-            return "redirect:/login"; // Or an appropriate error page
+            return "redirect:/login";
         }
 
-        UserDetails userDetails = null;
-        if (authentication.getPrincipal() instanceof UserDetails) {
-            userDetails = (UserDetails) authentication.getPrincipal();
+        User user = null;
+        if (authentication.getPrincipal() instanceof User) {
+            user = (User) authentication.getPrincipal();
+            logger.info("Principal is User. Username: {}", user.getUsername());
+        } else if (authentication.getPrincipal() instanceof UserDetails) {
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             logger.info("Principal is UserDetails. Username: {}", userDetails.getUsername());
-        } else if (authentication.getPrincipal() instanceof String) {
-            logger.warn("Principal is String: {}. This might indicate anonymous user or misconfiguration.", authentication.getPrincipal());
+            // You might need to fetch the User entity here if needed
         } else {
             logger.warn("Principal is unknown type: {}", authentication.getPrincipal().getClass().getName());
+            return "redirect:/login";
         }
 
-        if (userDetails == null) {
-            logger.error("Could not retrieve UserDetails from authentication principal.");
-            return "redirect:/error"; // Or an appropriate error page
+        if (user == null) {
+            logger.error("Could not retrieve User from authentication principal.");
+            return "redirect:/login";
         }
 
-        postService.createPost(postRequestDto, images, userDetails);
+        postService.createPost(postRequestDto, images, user);
         return "redirect:/posts";
     }
 
     @GetMapping("/{id}/edit")
     public String editPostForm(@PathVariable Long id, Model model) {
         model.addAttribute("post", postService.getPostById(id));
+        model.addAttribute("categories", categoryService.getAllCategories());
         return "posts/edit";
     }
 
     @PutMapping("/{id}")
     public String updatePost(@PathVariable Long id,
                              @ModelAttribute PostRequestDto postRequestDto,
-                             @RequestParam("addImages") List<MultipartFile> addImages,
-                             @RequestParam("deleteImages") List<Long> deleteImages,
-                             @AuthenticationPrincipal UserDetails userDetails) {
-        postService.updatePost(id, postRequestDto, addImages, deleteImages, userDetails);
+                             @RequestParam(value = "addImages", required = false) List<MultipartFile> addImages,
+                             @RequestParam(value = "deleteImages", required = false) List<Long> deleteImages,
+                             @AuthenticationPrincipal User user) {
+        if (user == null) {
+            return "redirect:/login";
+        }
+        postService.updatePost(id, postRequestDto, addImages, deleteImages, user);
         return "redirect:/posts/" + id;
     }
 
     @DeleteMapping("/{id}")
-    public String deletePost(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
-        postService.deletePost(id, userDetails);
+    public String deletePost(@PathVariable Long id, @AuthenticationPrincipal User user) {
+        if (user == null) {
+            return "redirect:/login";
+        }
+        postService.deletePost(id, user);
         return "redirect:/posts";
     }
 }

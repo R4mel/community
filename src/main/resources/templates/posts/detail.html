@@ -35,13 +35,13 @@
         </div>
         <div class="col-md-4 text-md-end">
             <div class="btn-group" role="group" sec:authorize="isAuthenticated()">
-                <a th:href="@{/posts/{id}/edit(id=${post.id})}" 
+                <a th:href="@{/posts/{id}/edit(id=${post.postId})}" 
                    class="btn btn-outline-primary btn-sm"
-                   th:if="${post.user.id == #authentication.principal.id}">
+                   th:if="${post.user.userId == #authentication.principal.userId}">
                     <i class="fas fa-edit me-1"></i>Edit
                 </a>
                 <button class="btn btn-outline-danger btn-sm" 
-                        th:if="${post.user.id == #authentication.principal.id}"
+                        th:if="${post.user.userId == #authentication.principal.userId}"
                         onclick="deletePost()">
                     <i class="fas fa-trash me-1"></i>Delete
                 </button>
@@ -50,11 +50,11 @@
     </div>
 
     <!-- Post Images -->
-    <div class="row mb-4" th:if="${post.images != null and !post.images.empty}">
+    <div class="row mb-4" th:if="${post.postImages != null and !post.postImages.empty}">
         <div class="col-12">
             <div id="postImageCarousel" class="carousel slide" data-bs-ride="carousel">
                 <div class="carousel-inner">
-                    <div class="carousel-item active" th:each="image, iterStat : ${post.images}">
+                    <div class="carousel-item active" th:each="image, iterStat : ${post.postImages}">
                         <img th:src="${image.imageUrl}" class="d-block w-100" 
                              style="max-height: 500px; object-fit: cover;" alt="Post image">
                     </div>
@@ -75,23 +75,23 @@
             <div class="card">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-start mb-3">
-                        <span class="badge bg-primary" th:text="${post.category?.name}">Category</span>
+                        <span class="badge bg-primary" th:text="${post.category?.categoryStatus?.description}">Category</span>
                         <div class="d-flex align-items-center">
                             <button class="btn btn-outline-danger btn-sm me-2" 
-                                    th:if="${post.isLikedByCurrentUser}" 
-                                    th:onclick="'unlikePost(' + ${post.id} + ')'">
+                                    th:if="${post.isLikedByCurrentUser != null and post.isLikedByCurrentUser}" 
+                                    th:onclick="'unlikePost(' + ${post.postId} + ')'">
                                 <i class="fas fa-heart me-1"></i>
-                                <span th:text="${post.likeCount}">0</span>
+                                <span th:text="${post.likeCount != null ? post.likeCount : 0}">0</span>
                             </button>
                             <button class="btn btn-outline-secondary btn-sm me-2" 
-                                    th:unless="${post.isLikedByCurrentUser}" 
-                                    th:onclick="'likePost(' + ${post.id} + ')'">
+                                    th:unless="${post.isLikedByCurrentUser != null and post.isLikedByCurrentUser}" 
+                                    th:onclick="'likePost(' + ${post.postId} + ')'">
                                 <i class="far fa-heart me-1"></i>
-                                <span th:text="${post.likeCount}">0</span>
+                                <span th:text="${post.likeCount != null ? post.likeCount : 0}">0</span>
                             </button>
                             <small class="text-muted">
                                 <i class="fas fa-comment me-1"></i>
-                                <span th:text="${post.commentCount}">0</span> comments
+                                <span th:text="${post.comments != null ? post.comments.size() : 0}">0</span> comments
                             </small>
                         </div>
                     </div>
@@ -111,13 +111,13 @@
                 <div class="card-header">
                     <h5 class="mb-0">
                         <i class="fas fa-comments me-2"></i>Comments
-                        <span class="badge bg-secondary ms-2" th:text="${post.commentCount}">0</span>
+                        <span class="badge bg-secondary ms-2" th:text="${post.comments != null ? post.comments.size() : 0}">0</span>
                     </h5>
                 </div>
                 <div class="card-body">
                     <!-- Add Comment Form -->
                     <div sec:authorize="isAuthenticated()" class="mb-4">
-                        <form th:action="@{/posts/{id}/comments(id=${post.id})}" method="post">
+                        <form th:action="@{/posts/{id}/comments(id=${post.postId})}" method="post">
                             <div class="mb-3">
                                 <textarea class="form-control" name="content" rows="3" 
                                           placeholder="Write a comment..." required></textarea>
@@ -145,9 +145,9 @@
                                             </small>
                                         </div>
                                         <div sec:authorize="isAuthenticated()" 
-                                             th:if="${comment.user.id == #authentication.principal.id}">
+                                             th:if="${comment.user.userId == #authentication.principal.userId}">
                                             <button class="btn btn-outline-danger btn-sm" 
-                                                    th:onclick="'deleteComment(' + ${comment.id} + ')'">
+                                                    th:onclick="'deleteComment(' + ${comment.comment_id} + ')'">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </div>
@@ -182,7 +182,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <form th:action="@{/posts/{id}(id=${post.id})}" method="post" style="display: inline;">
+                    <form th:action="@{/posts/{id}(id=${post.postId})}" method="post" style="display: inline;">
                         <input type="hidden" name="_method" value="DELETE">
                         <button type="submit" class="btn btn-danger">Delete</button>
                     </form>

@@ -11,7 +11,6 @@
     <div class="row mb-5">
         <div class="col-lg-8 mx-auto text-center">
             <h1 class="display-4 mb-4">Welcome to Our Community!</h1>
-            <p class="lead mb-4">Connect with others, share your thoughts, and discover amazing content.</p>
             
             <div sec:authorize="isAnonymous()">
                 <a href="/oauth2/authorization/kakao" class="btn btn-primary btn-lg me-3">
@@ -42,42 +41,7 @@
                         <img th:src="${profileImage}" alt="Profile" class="rounded-circle me-3" 
                              width="64" height="64" th:if="${profileImage != null}">
                         <i class="fas fa-user-circle fa-3x me-3" th:unless="${profileImage != null}"></i>
-                        <div>
-                            <h4 class="mb-1" th:text="${nickname}">User</h4>
-                            <p class="text-muted mb-0">Welcome back!</p>
-                        </div>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Features Section -->
-    <div class="row mb-5">
-        <div class="col-md-4 mb-4">
-            <div class="card h-100 text-center">
-                <div class="card-body">
-                    <i class="fas fa-users fa-3x text-primary mb-3"></i>
-                    <h5 class="card-title">Connect</h5>
-                    <p class="card-text">Join our community and connect with like-minded people from around the world.</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4 mb-4">
-            <div class="card h-100 text-center">
-                <div class="card-body">
-                    <i class="fas fa-share-alt fa-3x text-primary mb-3"></i>
-                    <h5 class="card-title">Share</h5>
-                    <p class="card-text">Share your thoughts, experiences, and ideas with the community.</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4 mb-4">
-            <div class="card h-100 text-center">
-                <div class="card-body">
-                    <i class="fas fa-heart fa-3x text-primary mb-3"></i>
-                    <h5 class="card-title">Engage</h5>
-                    <p class="card-text">Like, comment, and engage with posts from other community members.</p>
                 </div>
             </div>
         </div>

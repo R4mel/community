@@ -79,9 +79,9 @@
                             <select class="form-select" id="categoryId" name="categoryId" required>
                                 <option value="">Select a category</option>
                                 <option th:each="category : ${categories}" 
-                                        th:value="${category.id}" 
-                                        th:text="${category.name}"
-                                        th:selected="${post?.categoryId == category.id}">
+                                        th:value="${category.categoryId}" 
+                                        th:text="${category.categoryStatus.description}"
+                                        th:selected="${post?.categoryId == category.categoryId}">
                                     Category Name
                                 </option>
                             </select>
@@ -181,7 +181,7 @@
                             <i class="fas fa-info-circle text-info me-2"></i>
                             Keep content appropriate for all ages
                         </li>
-                       li class="mb-2">
+                        <li class="mb-2">
                             <i class="fas fa-info-circle text-info me-2"></i>
                             Respect copyright and intellectual property
                         </li>

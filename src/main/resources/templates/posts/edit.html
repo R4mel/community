@@ -50,7 +50,7 @@
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a th:href="@{/}">Home</a></li>
             <li class="breadcrumb-item"><a th:href="@{/posts}">Posts</a></li>
-            <li class="breadcrumb-item"><a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}">Post Title</a></li>
+            <li class="breadcrumb-item"><a th:href="@{/posts/{id}(id=${post.postId})}" th:text="${post.title}">Post Title</a></li>
             <li class="breadcrumb-item active">Edit</li>
         </ol>
     </nav>
@@ -70,7 +70,7 @@
         <div class="col-lg-8">
             <div class="card">
                 <div class="card-body">
-                    <form th:action="@{/posts/{id}(id=${post.id})}" method="post" enctype="multipart/form-data" id="editForm">
+                    <form th:action="@{/posts/{id}(id=${post.postId})}" method="post" enctype="multipart/form-data" id="editForm">
                         <input type="hidden" name="_method" value="PUT">
                         
                         <!-- Title -->
@@ -87,9 +87,9 @@
                             <select class="form-select" id="categoryId" name="categoryId" required>
                                 <option value="">Select a category</option>
                                 <option th:each="category : ${categories}" 
-                                        th:value="${category.id}" 
-                                        th:text="${category.name}"
-                                        th:selected="${post.category.id == category.id}">
+                                        th:value="${category.categoryId}" 
+                                        th:text="${category.categoryStatus.description}"
+                                        th:selected="${post.category.categoryId == category.categoryId}">
                                     Category Name
                                 </option>
                             </select>
@@ -104,16 +104,16 @@
                         </div>
 
                         <!-- Existing Images -->
-                        <div class="mb-3" th:if="${post.images != null and !post.images.empty}">
+                        <div class="mb-3" th:if="${post.postImages != null and !post.postImages.empty}">
                             <label class="form-label">Current Images</label>
                             <div class="image-preview-container">
-                                <div class="image-container existing-image" th:each="image : ${post.images}">
+                                <div class="image-container existing-image" th:each="image : ${post.postImages}">
                                     <img th:src="${image.imageUrl}" class="image-preview" alt="Post image">
                                     <button type="button" class="remove-image" 
-                                            th:onclick="'removeExistingImage(' + ${image.id} + ')'">
+                                            th:onclick="'removeExistingImage(' + ${image.postImageId} + ')'">
                                         ×
                                     </button>
-                                    <input type="hidden" name="deleteImages" th:value="${image.id}">
+                                    <input type="hidden" name="deleteImages" th:value="${image.postImageId}">
                                 </div>
                             </div>
                         </div>
@@ -138,7 +138,7 @@
                             <button type="submit" class="btn btn-primary">
                                 <i class="fas fa-save me-2"></i>Update Post
                             </button>
-                            <a th:href="@{/posts/{id}(id=${post.id})}" class="btn btn-outline-secondary">
+                            <a th:href="@{/posts/{id}(id=${post.postId})}" class="btn btn-outline-secondary">
                                 <i class="fas fa-times me-2"></i>Cancel
                             </a>
                         </div>
@@ -171,11 +171,11 @@
                         </li>
                         <li class="mb-2">
                             <strong>Likes:</strong>
-                            <span th:text="${post.likeCount}">0</span>
+                            <span th:text="${post.likeCount != null ? post.likeCount : 0}">0</span>
                         </li>
                         <li class="mb-2">
                             <strong>Comments:</strong>
-                            <span th:text="${post.commentCount}">0</span>
+                            <span th:text="${post.comments != null ? post.comments.size() : 0}">0</span>
                         </li>
                     </ul>
                 </div>
