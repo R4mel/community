@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title th:text="${user.nickname + ' - Profile - Community'}">User Profile - Community</title>
+</head>
+<body>
+<section>
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a th:href="@{/}">Home</a></li>
+            <li class="breadcrumb-item"><a th:href="@{/users}">Users</a></li>
+            <li class="breadcrumb-item active" th:text="${user.nickname}">User Name</li>
+        </ol>
+    </nav>
+
+    <!-- Profile Header -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="me-4">
+                            <img th:src="${user.profileImage}" alt="Profile" 
+                                 class="rounded-circle" width="120" height="120"
+                                 th:if="${user.profileImage != null}">
+                            <i class="fas fa-user-circle fa-6x text-muted" th:unless="${user.profileImage != null}"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h2 class="mb-2" th:text="${user.nickname}">User Name</h2>
+                            <p class="text-muted mb-3">
+                                <i class="fas fa-calendar me-2"></i>
+                                Member since <span th:text="${#temporals.format(user.createdAt, 'MMMM yyyy')}">Date</span>
+                            </p>
+                            <div class="d-flex gap-3">
+                                <div class="text-center">
+                                    <h5 class="mb-0" th:text="${user.postCount}">0</h5>
+                                    <small class="text-muted">Posts</small>
+                                </div>
+                                <div class="text-center">
+                                    <h5 class="mb-0" th:text="${user.totalLikes}">0</h5>
+                                    <small class="text-muted">Likes Received</small>
+                                </div>
+                                <div class="text-center">
+                                    <h5 class="mb-0" th:text="${user.totalComments}">0</h5>
+                                    <small class="text-muted">Comments</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div sec:authorize="isAuthenticated()" 
+                             th:if="${#authentication.principal.id == user.id}">
+                            <a th:href="@{/users/profile/edit}" class="btn btn-outline-primary">
+                                <i class="fas fa-edit me-2"></i>Edit Profile
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Activity Summary -->
+        <div class="col-md-4">
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-line me-2"></i>Activity Summary
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between">
+                            <span>Posts this month</span>
+                            <span class="fw-bold" th:text="${user.postsThisMonth}">0</span>
+                        </div>
+                        <div class="progress mt-1" style="height: 6px;">
+                            <div class="progress-bar" role="progressbar" 
+                                 th:style="'width: ' + ${user.postsThisMonth * 10} + '%'"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between">
+                            <span>Likes this month</span>
+                            <span class="fw-bold" th:text="${user.likesThisMonth}">0</span>
+                        </div>
+                        <div class="progress mt-1" style="height: 6px;">
+                            <div class="progress-bar bg-success" role="progressbar" 
+                                 th:style="'width: ' + ${user.likesThisMonth * 10} + '%'"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="d-flex justify-content-between">
+                            <span>Comments this month</span>
+                            <span class="fw-bold" th:text="${user.commentsThisMonth}">0</span>
+                        </div>
+                        <div class="progress mt-1" style="height: 6px;">
+                            <div class="progress-bar bg-info" role="progressbar" 
+                                 th:style="'width: ' + ${user.commentsThisMonth * 10} + '%'"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Posts -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-list me-2"></i>Posts by <span th:text="${user.nickname}">User</span>
+                    </h5>
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-outline-primary active" data-filter="all">All</button>
+                        <button type="button" class="btn btn-outline-primary" data-filter="recent">Recent</button>
+                        <button type="button" class="btn btn-outline-primary" data-filter="popular">Popular</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Posts Grid -->
+                    <div class="row" id="userPostsContainer">
+                        <div class="col-md-6 col-lg-4 mb-4" th:each="post : ${userPosts}">
+                            <div class="card h-100 post-card">
+                                <!-- Post Images -->
+                                <div class="post-images" th:if="${post.images != null and !post.images.empty}">
+                                    <img th:src="${post.images[0].imageUrl}" class="card-img-top" 
+                                         style="height: 200px; object-fit: cover;" alt="Post image">
+                                </div>
+                                
+                                <!-- Post Content -->
+                                <div class="card-body d-flex flex-column">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <h6 class="card-title mb-0" th:text="${post.title}">Post Title</h6>
+                                        <span class="badge bg-primary" th:text="${post.category?.name}">Category</span>
+                                    </div>
+                                    
+                                    <p class="card-text text-muted" th:text="${#strings.abbreviate(post.content, 80)}">
+                                        Post content preview...
+                                    </p>
+                                    
+                                    <div class="mt-auto">
+                                        <!-- Post Stats -->
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <small class="text-muted">
+                                                <i class="fas fa-heart me-1"></i>
+                                                <span th:text="${post.likeCount}">0</span>
+                                            </small>
+                                            <small class="text-muted">
+                                                <i class="fas fa-comment me-1"></i>
+                                                <span th:text="${post.commentCount}">0</span>
+                                            </small>
+                                            <small class="text-muted" th:text="${#temporals.format(post.createdAt, 'MMM dd')}">
+                                                Date
+                                            </small>
+                                        </div>
+                                        
+                                        <!-- Action Buttons -->
+                                        <div class="d-flex gap-2">
+                                            <a th:href="@{/posts/{id}(id=${post.id})}" class="btn btn-outline-primary btn-sm flex-fill">
+                                                <i class="fas fa-eye me-1"></i>View
+                                            </a>
+                                            <a th:href="@{/posts/{id}/edit(id=${post.id})}" 
+                                               class="btn btn-outline-secondary btn-sm"
+                                               th:if="${#authentication.principal.id == user.id}">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- No Posts Message -->
+                    <div class="text-center py-5" th:if="${#lists.isEmpty(userPosts)}">
+                        <i class="fas fa-edit fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">No posts yet</h5>
+                        <p class="text-muted" th:if="${#authentication.principal.id == user.id}">
+                            Start sharing your thoughts with the community!
+                        </p>
+                        <p class="text-muted" th:unless="${#authentication.principal.id == user.id}">
+                            This user hasn't posted anything yet.
+                        </p>
+                        <a th:href="@{/posts/new}" class="btn btn-primary" 
+                           th:if="${#authentication.principal.id == user.id}">
+                            <i class="fas fa-plus me-2"></i>Create First Post
+                        </a>
+                    </div>
+
+                    <!-- Pagination -->
+                    <nav th:if="${#lists.size(userPosts) > 0}" aria-label="User posts pagination">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" tabindex="-1">Previous</a>
+                            </li>
+                            <li class="page-item active">
+                                <a class="page-link" href="#">1</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">2</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">3</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">Next</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- JavaScript for filtering -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const filterButtons = document.querySelectorAll('[data-filter]');
+    const postCards = document.querySelectorAll('.post-card');
+    
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Remove active class from all buttons
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            // Add active class to clicked button
+            this.classList.add('active');
+            
+            const filter = this.getAttribute('data-filter');
+            filterPosts(filter);
+        });
+    });
+    
+    function filterPosts(filter) {
+        postCards.forEach(card => {
+            const likeCount = parseInt(card.querySelector('.fas.fa-heart').nextElementSibling.textContent);
+            const dateText = card.querySelector('.text-muted:last-child').textContent;
+            
+            let show = true;
+            
+            switch(filter) {
+                case 'recent':
+                    // Show posts from last 7 days
+                    const postDate = new Date(dateText);
+                    const weekAgo = new Date();
+                    weekAgo.setDate(weekAgo.getDate() - 7);
+                    show = postDate >= weekAgo;
+                    break;
+                case 'popular':
+                    // Show posts with 5+ likes
+                    show = likeCount >= 5;
+                    break;
+                default:
+                    // Show all posts
+                    show = true;
+            }
+            
+            card.closest('.col-md-6').style.display = show ? 'block' : 'none';
+        });
+    }
+});
+</script>
+</body>
+</html> 

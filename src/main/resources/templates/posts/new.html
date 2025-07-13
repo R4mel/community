@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Create New Post - Community</title>
+    <style>
+        .image-preview {
+            max-width: 200px;
+            max-height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin: 10px;
+        }
+        .image-preview-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .remove-image {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(255, 0, 0, 0.8);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        .image-container {
+            position: relative;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+<section>
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a th:href="@{/}">Home</a></li>
+            <li class="breadcrumb-item"><a th:href="@{/posts}">Posts</a></li>
+            <li class="breadcrumb-item active">Create New Post</li>
+        </ol>
+    </nav>
+
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="mb-2">
+                <i class="fas fa-plus me-2"></i>Create New Post
+            </h1>
+            <p class="text-muted">Share your thoughts and experiences with the community</p>
+        </div>
+    </div>
+
+    <!-- Post Form -->
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-body">
+                    <form th:action="@{/posts}" method="post" enctype="multipart/form-data" id="postForm">
+                        <!-- Title -->
+                        <div class="mb-3">
+                            <label for="title" class="form-label">Title *</label>
+                            <input type="text" class="form-control" id="title" name="title" 
+                                   th:value="${post?.title}" required 
+                                   placeholder="Enter your post title">
+                            <div class="form-text">Choose a clear and descriptive title for your post.</div>
+                        </div>
+
+                        <!-- Category -->
+                        <div class="mb-3">
+                            <label for="categoryId" class="form-label">Category *</label>
+                            <select class="form-select" id="categoryId" name="categoryId" required>
+                                <option value="">Select a category</option>
+                                <option th:each="category : ${categories}" 
+                                        th:value="${category.id}" 
+                                        th:text="${category.name}"
+                                        th:selected="${post?.categoryId == category.id}">
+                                    Category Name
+                                </option>
+                            </select>
+                        </div>
+
+                        <!-- Content -->
+                        <div class="mb-3">
+                            <label for="content" class="form-label">Content *</label>
+                            <textarea class="form-control" id="content" name="content" rows="8" 
+                                      placeholder="Write your post content here..." required
+                                      th:text="${post?.content}"></textarea>
+                            <div class="form-text">
+                                You can use basic formatting. Be respectful and follow community guidelines.
+                            </div>
+                        </div>
+
+                        <!-- Image Upload -->
+                        <div class="mb-3">
+                            <label for="images" class="form-label">Images (Optional)</label>
+                            <input type="file" class="form-control" id="images" name="images" 
+                                   multiple accept="image/*">
+                            <div class="form-text">
+                                You can upload multiple images. Supported formats: JPG, PNG, GIF (Max 5MB each)
+                            </div>
+                            
+                            <!-- Image Preview -->
+                            <div id="imagePreviewContainer" class="image-preview-container" style="display: none;">
+                                <!-- Preview images will be added here -->
+                            </div>
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane me-2"></i>Publish Post
+                            </button>
+                            <a th:href="@{/posts}" class="btn btn-outline-secondary">
+                                <i class="fas fa-times me-2"></i>Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-lightbulb me-2"></i>Writing Tips
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2"></i>
+                            Write clear and engaging titles
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2"></i>
+                            Use paragraphs to organize your content
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2"></i>
+                            Be respectful and constructive
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2"></i>
+                            Add relevant images to enhance your post
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2"></i>
+                            Choose the appropriate category
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-shield-alt me-2"></i>Community Guidelines
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2">
+                            <i class="fas fa-info-circle text-info me-2"></i>
+                            Be respectful to others
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-info-circle text-info me-2"></i>
+                            No spam or promotional content
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-info-circle text-info me-2"></i>
+                            Keep content appropriate for all ages
+                        </li>
+                       li class="mb-2">
+                            <i class="fas fa-info-circle text-info me-2"></i>
+                            Respect copyright and intellectual property
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- JavaScript for image preview -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const imageInput = document.getElementById('images');
+    const previewContainer = document.getElementById('imagePreviewContainer');
+    
+    imageInput.addEventListener('change', function(e) {
+        previewContainer.innerHTML = '';
+        previewContainer.style.display = 'none';
+        
+        if (e.target.files.length > 0) {
+            previewContainer.style.display = 'flex';
+            
+            Array.from(e.target.files).forEach((file, index) => {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const imageContainer = document.createElement('div');
+                        imageContainer.className = 'image-container';
+                        
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.className = 'image-preview';
+                        img.alt = 'Preview';
+                        
+                        const removeBtn = document.createElement('button');
+                        removeBtn.className = 'remove-image';
+                        removeBtn.innerHTML = '×';
+                        removeBtn.onclick = function() {
+                            imageContainer.remove();
+                            if (previewContainer.children.length === 0) {
+                                previewContainer.style.display = 'none';
+                            }
+                        };
+                        
+                        imageContainer.appendChild(img);
+                        imageContainer.appendChild(removeBtn);
+                        previewContainer.appendChild(imageContainer);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+    });
+    
+    // Form validation
+    const form = document.getElementById('postForm');
+    form.addEventListener('submit', function(e) {
+        const title = document.getElementById('title').value.trim();
+        const content = document.getElementById('content').value.trim();
+        const category = document.getElementById('categoryId').value;
+        
+        if (!title) {
+            e.preventDefault();
+            alert('Please enter a title for your post.');
+            return;
+        }
+        
+        if (!content) {
+            e.preventDefault();
+            alert('Please enter content for your post.');
+            return;
+        }
+        
+        if (!category) {
+            e.preventDefault();
+            alert('Please select a category for your post.');
+            return;
+        }
+    });
+});
+</script>
+</body>
+</html> 

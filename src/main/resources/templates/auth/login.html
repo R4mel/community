@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Login - Community</title>
+    <style>
+        .login-container {
+            min-height: 70vh;
+            display: flex;
+            align-items: center;
+        }
+        .login-card {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        .kakao-login-btn {
+            background-color: #FEE500;
+            border-color: #FEE500;
+            color: #000;
+            font-weight: 500;
+        }
+        .kakao-login-btn:hover {
+            background-color: #E6CF00;
+            border-color: #E6CF00;
+            color: #000;
+        }
+        .divider {
+            text-align: center;
+            margin: 2rem 0;
+            position: relative;
+        }
+        .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #dee2e6;
+        }
+        .divider span {
+            background: white;
+            padding: 0 1rem;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+<section class="login-container">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+                <div class="card login-card">
+                    <div class="card-body p-5">
+                        <!-- Header -->
+                        <div class="text-center mb-4">
+                            <i class="fas fa-users fa-3x text-primary mb-3"></i>
+                            <h2 class="mb-2">Welcome Back</h2>
+                            <p class="text-muted">Sign in to your Community account</p>
+                        </div>
+
+                        <!-- Login Options -->
+                        <div class="mb-4">
+                            <a href="/oauth2/authorization/kakao" class="btn kakao-login-btn w-100 mb-3">
+                                <img th:src="@{/kakao_login_medium_narrow.png}" alt="Kakao" height="24" class="me-2">
+                                Continue with Kakao
+                            </a>
+                            
+                            <div class="divider">
+                                <span>or</span>
+                            </div>
+                            
+                            <div class="text-center">
+                                <p class="text-muted mb-0">Don't have an account?</p>
+                                <a href="/oauth2/authorization/kakao" class="text-decoration-none">
+                                    Sign up with Kakao
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Benefits -->
+                        <div class="mt-4">
+                            <h6 class="mb-3">
+                                <i class="fas fa-star text-warning me-2"></i>Why join our community?
+                            </h6>
+                            <ul class="list-unstyled">
+                                <li class="mb-2">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    Share your thoughts and experiences
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    Connect with like-minded people
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    Discover amazing content
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    Engage with posts and comments
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Footer -->
+                        <div class="text-center mt-4">
+                            <small class="text-muted">
+                                By signing in, you agree to our 
+                                <a href="#" class="text-decoration-none">Terms of Service</a> and 
+                                <a href="#" class="text-decoration-none">Privacy Policy</a>
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html> 

@@ -3,36 +3,119 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       th:replace="~{layout :: layout(~{::title}, ~{::section})}">
 <head>
-    <title>Main</title>
+    <title>Welcome to Community</title>
 </head>
 <body>
 <section>
-    <h1>Welcome to the Community!</h1>
-    <p>This is the main page.</p>
-
-    <h2>Menu</h2>
-    <ul>
-        <li><a th:href="@{/users}">Users</a></li>
-        <li><a th:href="@{/posts}">Posts</a></li>
-    </ul>
-
-    <!-- 로그인 안 한 사용자용 -->
-    <div sec:authorize="isAnonymous()">
-        <a href="/oauth2/authorization/kakao">
-            <img th:src="@{/kakao_login_medium_narrow.png}" alt="Kakao Login">
-        </a>
+    <!-- Hero Section -->
+    <div class="row mb-5">
+        <div class="col-lg-8 mx-auto text-center">
+            <h1 class="display-4 mb-4">Welcome to Our Community!</h1>
+            <p class="lead mb-4">Connect with others, share your thoughts, and discover amazing content.</p>
+            
+            <div sec:authorize="isAnonymous()">
+                <a href="/oauth2/authorization/kakao" class="btn btn-primary btn-lg me-3">
+                    <i class="fab fa-kakao me-2"></i>Join with Kakao
+                </a>
+                <a th:href="@{/posts}" class="btn btn-outline-primary btn-lg">
+                    <i class="fas fa-eye me-2"></i>Browse Posts
+                </a>
+            </div>
+            
+            <div sec:authorize="isAuthenticated()">
+                <a th:href="@{/posts/new}" class="btn btn-primary btn-lg me-3">
+                    <i class="fas fa-plus me-2"></i>Create Post
+                </a>
+                <a th:href="@{/posts}" class="btn btn-outline-primary btn-lg">
+                    <i class="fas fa-list me-2"></i>View All Posts
+                </a>
+            </div>
+        </div>
     </div>
 
-    <!-- 로그인한 사용자용 -->
-    <div sec:authorize="isAuthenticated()">
-        <p>
-            <strong th:text="${nickname}">닉네임</strong> 님 환영합니다!
-        </p>
-        <img th:src="${profileImage}" alt="프로필 이미지" width="100" height="100"/>
+    <!-- Welcome Message for Authenticated Users -->
+    <div sec:authorize="isAuthenticated()" class="row mb-4">
+        <div class="col-md-8 mx-auto">
+            <div class="card">
+                <div class="card-body text-center">
+                    <div class="d-flex align-items-center justify-content-center mb-3">
+                        <img th:src="${profileImage}" alt="Profile" class="rounded-circle me-3" 
+                             width="64" height="64" th:if="${profileImage != null}">
+                        <i class="fas fa-user-circle fa-3x me-3" th:unless="${profileImage != null}"></i>
+                        <div>
+                            <h4 class="mb-1" th:text="${nickname}">User</h4>
+                            <p class="text-muted mb-0">Welcome back!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        <form th:action="@{/logout}" method="post">
-            <button type="submit">로그아웃</button>
-        </form>
+    <!-- Features Section -->
+    <div class="row mb-5">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 text-center">
+                <div class="card-body">
+                    <i class="fas fa-users fa-3x text-primary mb-3"></i>
+                    <h5 class="card-title">Connect</h5>
+                    <p class="card-text">Join our community and connect with like-minded people from around the world.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 text-center">
+                <div class="card-body">
+                    <i class="fas fa-share-alt fa-3x text-primary mb-3"></i>
+                    <h5 class="card-title">Share</h5>
+                    <p class="card-text">Share your thoughts, experiences, and ideas with the community.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 text-center">
+                <div class="card-body">
+                    <i class="fas fa-heart fa-3x text-primary mb-3"></i>
+                    <h5 class="card-title">Engage</h5>
+                    <p class="card-text">Like, comment, and engage with posts from other community members.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row">
+        <div class="col-lg-6 mx-auto">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <a th:href="@{/posts}" class="btn btn-outline-primary w-100">
+                                <i class="fas fa-list me-2"></i>Browse Posts
+                            </a>
+                        </div>
+                        <div class="col-md-6 mb-3" sec:authorize="isAuthenticated()">
+                            <a th:href="@{/posts/new}" class="btn btn-outline-success w-100">
+                                <i class="fas fa-plus me-2"></i>Create Post
+                            </a>
+                        </div>
+                        <div class="col-md-6 mb-3" sec:authorize="isAuthenticated()">
+                            <a th:href="@{/users/profile}" class="btn btn-outline-info w-100">
+                                <i class="fas fa-user me-2"></i>My Profile
+                            </a>
+                        </div>
+                        <div class="col-md-6 mb-3" sec:authorize="isAnonymous()">
+                            <a href="/oauth2/authorization/kakao" class="btn btn-outline-warning w-100">
+                                <i class="fab fa-kakao me-2"></i>Login
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </section>
 </body>
