@@ -57,6 +57,7 @@ public class Post {
         this.category = category;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
+        this.viewCount = 0;
     }
 
     /**
@@ -74,6 +75,9 @@ public class Post {
     }
 
     public void increaseViewCount() {
+        if (this.viewCount == null) {
+            this.viewCount = 0;
+        }
         this.viewCount++;
     }
 }

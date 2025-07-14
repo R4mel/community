@@ -19,6 +19,9 @@ public class PostImage {
     @Column(name = "image_url", columnDefinition = "")
     private String imageUrl;
 
+    @Column(name = "original_filename")
+    private String originalFilename;
+
     @ManyToOne(fetch = FetchType.LAZY) // Many(PostImage) to One(Post)
     @JoinColumn(name = "post_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Post post;

@@ -24,6 +24,7 @@ public class PostImageService {
             String imageUrl = fileStorageService.uploadFile(imageFile);
             PostImage postImage = PostImage.builder()
                     .imageUrl(imageUrl)
+                    .originalFilename(imageFile.getOriginalFilename())
                     .post(post)
                     .build();
 

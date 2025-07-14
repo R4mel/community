@@ -110,7 +110,7 @@ public class PostService {
      * @param postId 조회할 게시글의 ID
      * @return 특정 게시글의 상세 정보가 담긴 DTO
      */
-    @Transactional(readOnly = true)
+    @Transactional
     public PostResponseDto getPostById(Long postId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 ID의 게시글을 찾을 수 없습니다: " + postId));

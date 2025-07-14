@@ -34,7 +34,7 @@ public class PostResponseDto {
         this.content = post.getContent();
         this.createdAt = post.getCreatedAt();
         this.updatedAt = post.getUpdatedAt();
-        this.viewCount = post.getViewCount();
+        this.viewCount = post.getViewCount() != null ? post.getViewCount() : 0;
         this.userId = post.getUser().getUserId();
         this.authorNickname = post.getUser().getNickname();
         this.categoryId = post.getCategory().getCategoryId();
